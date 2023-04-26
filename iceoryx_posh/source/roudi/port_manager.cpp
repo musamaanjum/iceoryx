@@ -876,7 +876,7 @@ PortManager::acquirePublisherPortDataWithoutDiscovery(const capro::ServiceDescri
             }))
     {
         errorHandler(PoshError::POSH__PORT_MANAGER_PUBLISHERPORT_NOT_UNIQUE, ErrorLevel::MODERATE);
-        return error<PortPoolError>(PortPoolError::UNIQUE_PUBLISHER_PORT_ALREADY_EXISTS);
+        return err(PortPoolError::UNIQUE_PUBLISHER_PORT_ALREADY_EXISTS);
     }
 
     if (runtimeName == RuntimeName_t{IPC_CHANNEL_ROUDI_NAME})
@@ -886,7 +886,7 @@ PortManager::acquirePublisherPortDataWithoutDiscovery(const capro::ServiceDescri
     else if (isInternal(service))
     {
         errorHandler(PoshError::POSH__PORT_MANAGER_INTERNAL_SERVICE_DESCRIPTION_IS_FORBIDDEN, ErrorLevel::MODERATE);
-        return error<PortPoolError>(PortPoolError::INTERNAL_SERVICE_DESCRIPTION_IS_FORBIDDEN);
+        return err(PortPoolError::INTERNAL_SERVICE_DESCRIPTION_IS_FORBIDDEN);
     }
 
     // we can create a new port
@@ -1004,7 +1004,7 @@ PortManager::acquireServerPortData(const capro::ServiceDescription& service,
                           << serverPortData->m_runtimeName << "' with service '"
                           << service.operator cxx::Serialization().toString() << "'.";
             errorHandler(PoshError::POSH__PORT_MANAGER_SERVERPORT_NOT_UNIQUE, ErrorLevel::MODERATE);
-            return error<PortPoolError>(PortPoolError::UNIQUE_SERVER_PORT_ALREADY_EXISTS);
+            return err(PortPoolError::UNIQUE_SERVER_PORT_ALREADY_EXISTS);
         }
     }
 
