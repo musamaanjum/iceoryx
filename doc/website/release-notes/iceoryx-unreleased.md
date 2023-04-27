@@ -1102,6 +1102,7 @@
     std::chrono::milliseconds chronoDuration = 1_ms;
     iox::units::Duration ioxDuration{into<iox::units::Duration>(chronoDuration)};
     ```
+
 49. Replace error only `expected<E>` with `void` value type `expected<void, E>`
 
     ```cpp
@@ -1110,4 +1111,28 @@
 
     // after
     iox::expected<void, MyCustomError> foo();
+    ```
+
+50. `iox::success` and `iox::error` are deprecated in favour of `ok` and `err` free functions
+
+    ```cpp
+    // before
+    return iox::success<void>();
+
+    // after
+    return iox::ok();
+
+
+    // before
+    return iox::success<bool>(true);
+
+    // after
+    return iox::ok(true);
+
+
+    // before
+    return iox::error<MyCustomError>(MyCustomError::ERROR_CODE);
+
+    // after
+    return iox::err(MyCustomError::ERROR_CODE);
     ```
