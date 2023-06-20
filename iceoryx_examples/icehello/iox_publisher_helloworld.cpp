@@ -29,30 +29,25 @@
 
 #include <iostream>
 
-
 int main()
 {
-    //! [initialize runtime]
     constexpr char APP_NAME[] = "iox-cpp-publisher-helloworld";
     iox::runtime::PoshRuntime::initRuntime(APP_NAME);
-    //! [initialize runtime]
 
-    //! [create publisher]
+//    iox::popo::PublisherOptions publisherOptions;
+//    publisherOptions.historyCapacity = 16U;
+//    publisherOptions.offerOnCreate = false;
+//    publisherOptions.subscriberTooSlowPolicy = iox::popo::ConsumerTooSlowPolicy::WAIT_FOR_CONSUMER;
+
     iox::popo::Publisher<RadarObject> publisher({"Radar", "FrontLeft", "Object"});
-    //! [create publisher]
 
     double ct = 0.0;
-    //! [wait for term]
+
     while (!iox::posix::hasTerminationRequested())
-    //! [wait for term]
     {
         ++ct;
 
-        // Retrieve a sample from shared memory
-        //! [loan]
         auto loanResult = publisher.loan();
-        //! [loan]
-        //! [publish]
         if (loanResult.has_value())
         {
             auto& sample = loanResult.value();
@@ -60,22 +55,18 @@ int main()
             sample->x = ct;
             sample->y = ct;
             sample->z = ct;
+            memset(sample->mem, 0xF1, RADAROBJECT_MEM_SIZE);
+
             sample.publish();
         }
-        //! [publish]
-        //! [error]
         else
         {
             auto error = loanResult.error();
-            // Do something with error
             std::cerr << "Unable to loan sample, error code: " << error << std::endl;
         }
-        //! [error]
 
-        //! [msg]
         std::cout << APP_NAME << " sent value: " << ct << std::endl;
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        //! [msg]
+//        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
     return 0;

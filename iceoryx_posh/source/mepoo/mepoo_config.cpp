@@ -51,6 +51,9 @@ MePooConfig& MePooConfig::setDefaults() noexcept
     m_mempoolConfig.push_back({1024 * 512, 50});
     m_mempoolConfig.push_back({1024 * 1024, 30});
     m_mempoolConfig.push_back({1024 * 1024 * 4, 10});
+//    m_mempoolConfig.push_back({1024 * 1024 * 66, 100});
+//    m_mempoolConfig.push_back({1024 * 1024 * 130, 50});
+    m_mempoolConfig.push_back({1024 * 1024 * 257, 50});
 
     return *this;
 }
