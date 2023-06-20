@@ -24,30 +24,48 @@
 
 #include <iostream>
 
-int main()
+int main(int argc, char **argv)
 {
-    //! [initialize runtime]
-    constexpr char APP_NAME[] = "iox-cpp-subscriber-helloworld";
+    char APP_NAME[32];
+    if (argc > 1) {
+	    memcpy(APP_NAME, argv[1], strlen(argv[1]));
+    } else {
+	    char *na = "iox-cpp-subscriber-helloworld1";
+	    memcpy(APP_NAME, na, strlen(na));
+	    printf("%s %s\n", na, APP_NAME);
+    }
+
+	std::clock_t start, end;
+	float total = 0, cnt = 0;
+
+
     iox::runtime::PoshRuntime::initRuntime(APP_NAME);
-    //! [initialize runtime]
+    char dummy_gpu_buf[RADAROBJECT_MEM_SIZE];
 
-    //! [initialize subscriber]
+//    iox::popo::SubscriberOptions subscriberOptions;
+//    subscriberOptions.queueCapacity = 1U;
+//    subscriberOptions.historyRequest = 5U;
+//    subscriberOptions.requiresPublisherHistorySupport = false;
+//    subscriberOptions.queueFullPolicy = iox::popo::QueueFullPolicy::BLOCK_PRODUCER;
+
     iox::popo::Subscriber<RadarObject> subscriber({"Radar", "FrontLeft", "Object"});
-    //! [initialize subscriber]
 
-    // run until interrupted by Ctrl-C
     while (!iox::posix::hasTerminationRequested())
     {
-        //! [receive]
+
+            start = std::clock();
+
         auto takeResult = subscriber.take();
         if (takeResult.has_value())
         {
-            std::cout << APP_NAME << " got value: " << takeResult.value()->x << std::endl;
+
+        	std::cout << APP_NAME << " got value: " << takeResult.value()->x << std::endl;
+            memcpy(dummy_gpu_buf, takeResult.value()->mem, RADAROBJECT_MEM_SIZE);
+
+            cnt++;
         }
-        //! [receive]
         else
         {
-            //! [error]
             if (takeResult.error() == iox::popo::ChunkReceiveResult::NO_CHUNK_AVAILABLE)
             {
                 std::cout << "No chunk available." << std::endl;
@@ -56,12 +74,29 @@ int main()
             {
                 std::cout << "Error receiving chunk." << std::endl;
             }
-            //! [error]
         }
 
-        //! [wait]
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        //! [wait]
+        end = std::clock();
+        total += (float(end - start)) / CLOCKS_PER_SEC;
+
+
+        std::cout << "total time " << total << " cnt " << cnt << " Bandwidth " << float(cnt * 128)/(total*1024) << " GBps" <<  std::endl;
+
+
+//	subscriber
+//	    .take()
+//	    .and_then([](auto& sample) {
+//		std::cout << " got value: " << sample->x << std::endl;
+//		memcpy(dummy_gpu_buf, sample->mem, RADAROBJECT_MEM_SIZE);
+//	    })
+//	    .or_else([](auto& result) {
+//		if (result != iox::popo::ChunkReceiveResult::NO_CHUNK_AVAILABLE)
+//		{
+//		    std::cout << "Error receiving chunk." << std::endl;
+//		}
+//	    });
+
+//        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
     return (EXIT_SUCCESS);

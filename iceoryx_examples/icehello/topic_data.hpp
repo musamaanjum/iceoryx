@@ -16,9 +16,14 @@
 #ifndef IOX_EXAMPLES_ICEHELLO_TOPIC_DATA_HPP
 #define IOX_EXAMPLES_ICEHELLO_TOPIC_DATA_HPP
 
+#include <cstddef>
+
+#define RADAROBJECT_MEM_SIZE	256*1024*1024
+
 //! [radar object]
 struct RadarObject
 {
+    char mem[RADAROBJECT_MEM_SIZE];
     double x = 0.0;
     double y = 0.0;
     double z = 0.0;
