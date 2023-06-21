@@ -55,6 +55,7 @@ endif()
 # ===== Language binding for C
 if(BINDING_C)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../iceoryx_binding_c ${CMAKE_BINARY_DIR}/iceoryx_binding_c)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../iceoryx_binding_python ${CMAKE_BINARY_DIR}/iceoryx_binding_python)
 endif()
 
 # ===== Examples
